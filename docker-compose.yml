@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-   mariadb:
+  mariadb:
+    restart: always
     build: services/db
     volumes:
       - db_data:/var/lib/mysql
