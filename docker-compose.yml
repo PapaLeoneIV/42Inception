@@ -8,6 +8,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - db_network
+# i will need to remove ports because i dont need to be open to the extern but only to the network
     ports:
       - "3306:3306"
     env_file:
