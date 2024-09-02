@@ -1,23 +1,20 @@
-FROM alpine:3.8
+FROM alpine:3.15.0
 
-RUN apk add mariadb mariadb-client
+# install prerequisites
+RUN apk update && \
+  apk add --no-cache \
+  mariadb mariadb-client
 
+  
 
-RUN chown -R mysql:mysql /var/lib/mysql
+COPY /conf/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
 
-RUN mkdir /etc/init.d/mysql \
-&& chown -R root:root /etc/init.d/mysql \
-&& chmod 777 /etc/init.d/mysql 
-
-RUN mkdir -p /var/run/mysqld \
-&& chown -R mysql:mysql /var/run/mysqld \
-&& chmod 777 /var/run/mysqld
+COPY tools/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod 777 /usr/local/bin/entrypoint.sh
+ENTRYPOINT [ "entrypoint.sh" ] 
 
 EXPOSE 3306
+STOPSIGNAL SIGQUIT
 
-COPY ./scripts/mariadb.sh /usr/local/bin/
-RUN chown -R mysql:mysql /usr/local/bin/mariadb.sh
-RUN chmod +x /usr/local/bin/mariadb.sh
-
-ENTRYPOINT ["/usr/local/bin/mariadb.sh"]
-
+VOLUME ["/var/lib/mysql"]
