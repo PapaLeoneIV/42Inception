@@ -13,7 +13,7 @@ fi
 #TODO the mysql process is running in the background, i will need to figure out how to run it in the  without stopping
 
 echo "Starting MariaDB..."
-mysqld --user=mysql --console &
+mysqld --user=mysql --datadir=/var/lib/mysql --console &
 
 sleep 5
 
