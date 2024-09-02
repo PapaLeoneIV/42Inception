@@ -2,6 +2,8 @@
 
 SOCKET_FILE=/var/run/mysqld/mysqld.sock
 
+#TODO aggiungere l inizializzazione del db con i dati di wordpress
+
 if [ -S "$SOCKET_FILE" ]; then
     echo "MariaDB is already running, proceeding with configuration..."
 
