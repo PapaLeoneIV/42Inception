@@ -1,12 +1,12 @@
 FROM alpine:3.8
 
-RUN apk add --no-cache mariadb mariadb-client 
+RUN apk add mariadb mariadb-client
 
 
-RUN chown -R mysql:root /var/lib/mysql
+RUN chown -R mysql:mysql /var/lib/mysql
 
 RUN mkdir /etc/init.d/mysql \
-&& chown -R mysql:mysql /etc/init.d/mysql \
+&& chown -R root:root /etc/init.d/mysql \
 && chmod 777 /etc/init.d/mysql 
 
 RUN mkdir -p /var/run/mysqld \
