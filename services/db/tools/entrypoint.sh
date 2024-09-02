@@ -1,10 +1,5 @@
 #!/bin/sh
 
-MYSQL_HOSTNAME=mariadb
-MYSQL_DATABASE=wordpress
-MYSQL_USER=rileone
-MYSQL_PASSWORD=passwordadmin
-MYSQL_ROOT_PASSWORD=passwordroot
 SOCKET_FILE=/var/run/mysqld/mysqld.sock
 
 if [ -S "$SOCKET_FILE" ]; then
@@ -21,6 +16,7 @@ else
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
     echo "MySQL database initialized"
 
+    echo "Starting MariaDB in the background..."
     mysqld_safe --user=mysql --datadir=/var/lib/mysql &
 
     until mysqladmin ping --silent; do
@@ -36,5 +32,6 @@ else
     mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
 fi
 
+echo "Starting MariaDB in the foreground..."
 exec mysqld_safe --user=mysql --datadir=/var/lib/mysql
 
