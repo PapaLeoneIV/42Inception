@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mariadb:
     restart: always
-    build: services/db
+    build: requirements/db
     volumes:
       - db_data:/var/lib/mysql
     networks:
