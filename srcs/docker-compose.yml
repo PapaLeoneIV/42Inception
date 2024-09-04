@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mariadb:
     restart: always
-    build: requirements/db
+    build: requirements/mariadb
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -13,9 +13,20 @@ services:
       - "3306:3306"
     env_file:
       - .env
-
+  wordpress:
+    restart: always
+    build: requirements/wordpress
+    volumes:
+      - wordpress_data:/var/www/html #i think i need to copy the static files inside the volume from the dockerfile
+    networks:
+      - db_network
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
 volumes:
   db_data:
+  wordpress_data:
 
 networks:
   db_network:
