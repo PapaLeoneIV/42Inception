@@ -18,7 +18,6 @@ print_info "Downloading wp-cli.phar..."
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 if [[ $? -ne 0 ]]; then
     print_error "Failed to download wp-cli.phar!"
-    exit 1
 else
     print_success "wp-cli.phar downloaded successfully."
 fi
@@ -77,9 +76,14 @@ fi
 
 # Updating wp-config.php with database credentials
 print_info "Updating wp-config.php with database credentials..."
-sed -i "s/db/$MYSQL_DATABASE/g" wp-config.php
-sed -i "s/user/$MYSQL_USER/g" wp-config.php
-sed -i "s/tmp/$MYSQL_PASSWORD/g" wp-config.php
+sed -i "s/db/$MYSQL_DATABASE/" wp-config.php
+sed -i "s/user/$MYSQL_USER/" wp-config.php
+sed -i "s/tmp/$MYSQL_PASSWORD/" wp-config.php
+sed -i "s/host/$MYSQL_HOSTNAME/" wp-config.php
+
+cat wp-config.php
+
+
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update wp-config.php!"
     exit 1
@@ -89,20 +93,19 @@ fi
 
 # Installing WordPress
 print_info "Installing WordPress..."
+
 wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USR --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "WordPress installation failed!"
-    exit 1
 else
     print_success "WordPress installed successfully."
 fi
 
 # Creating a new WordPress user
 print_info "Creating a new WordPress user..."
-wp user create $WP_USR $WP_EMAIL --role=author --user_pass=$WP_USER_PASSWORD --porcelain --allow-root
+wp user create $WP_USER $WP_USER_EMAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to create the WordPress user!"
-    exit 1
 else
     print_success "New WordPress user created successfully."
 fi

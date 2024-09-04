@@ -2,38 +2,80 @@
 
 SOCKET_FILE=/var/run/mysqld/mysqld.sock
 
-#TODO aggiungere l inizializzazione del db con i dati di wordpress
+# Function to print messages with colors
+print_info() {
+    echo -e "\e[34m[INFO]\e[0m $1"
+}
 
+print_success() {
+    echo -e "\e[32m[SUCCESS]\e[0m $1"
+}
+
+print_error() {
+    echo -e "\e[31m[ERROR]\e[0m $1"
+}
+
+# Function to execute a MySQL command and check for errors
+execute_mysql_command() {
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "$1"
+    if [[ $? -ne 0 ]]; then
+        print_error "MySQL command failed: $1"
+    else
+        print_success "MySQL command executed successfully: $1"
+    fi
+}
+
+# Check if MariaDB socket file exists, indicating that the service is running
 if [ -S "$SOCKET_FILE" ]; then
-    echo "MariaDB is already running, proceeding with configuration..."
+    print_info "MariaDB is already running, proceeding with configuration..."
 
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO $MYSQL_USER@'%';"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
+    # Create database, user, and grant privileges
 
+
+
+    execute_mysql_command "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
+    execute_mysql_command "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
+    execute_mysql_command "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO $MYSQL_USER@'%';"
+    execute_mysql_command "FLUSH PRIVILEGES;"
+
+    print_info "Shutting down MariaDB..."
     mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
 else
-    echo "Initializing MariaDB data directory..."
+    print_info "MariaDB is not running. Initializing data directory..."
+
+    # Initialize the MariaDB data directory
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
-    echo "MySQL database initialized"
+    if [[ $? -ne 0 ]]; then
+        print_error "Failed to initialize MariaDB data directory."
+        exit 1
+    else
+        print_success "MariaDB data directory initialized."
+    fi
 
-    echo "Starting MariaDB in the background..."
+    print_info "Starting MariaDB in the background..."
     mysqld_safe --user=mysql --datadir=/var/lib/mysql &
-
+    sleep 5
+    
     until mysqladmin ping --silent; do
-        echo "Waiting for MariaDB to start..."
+        print_info "Waiting for MariaDB to start..."
         sleep 2
     done
 
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO $MYSQL_USER@'%';"
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
+    print_success "MariaDB started."
 
+
+    print_info $MYSQL_DATABASE
+    print_info $MYSQL_USER
+    print_info $MYSQL_PASSWORD
+
+    execute_mysql_command "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
+    execute_mysql_command "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
+    execute_mysql_command "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO $MYSQL_USER@'%';"
+    execute_mysql_command "FLUSH PRIVILEGES;"
+
+    print_info "Shutting down MariaDB..."
     mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
 fi
 
-echo "Starting MariaDB in the foreground..."
+print_info "Starting MariaDB in the foreground..."
 exec mysqld_safe --user=mysql --datadir=/var/lib/mysql
-
