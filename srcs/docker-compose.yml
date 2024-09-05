@@ -28,13 +28,15 @@ services:
     restart: always
     build: requirements/nginx
     ports:
-      - "81:81" #needs to be changed to 443 when i set up https
+      - "443:443" #needs to be changed to 443 when i set up https
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - db_network
     depends_on:
       - wordpress
+    env_file:
+      - .env
 
 volumes:
   db_data:

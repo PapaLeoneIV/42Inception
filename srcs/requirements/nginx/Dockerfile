@@ -6,10 +6,16 @@ RUN apt-get update && \
   nginx \
   openssl -y
 
-COPY /conf/nginx.conf /etc/nginx/sites-available/default
+RUN mkdir -p /etc/ssl/certs/ \
+  && mkdir -p /etc/ssl/private/ 
+
+
+COPY /conf/nginx.conf /etc/nginx/nginx.conf
 
 COPY tools/entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+
 
 ENTRYPOINT [ "entrypoint.sh" ]
