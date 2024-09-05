@@ -8,7 +8,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - db_network
+      - inception_network
     env_file:
       - .env
   wordpress:
@@ -18,7 +18,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html #i think i need to copy the static files inside the volume from the dockerfile
     networks:
-      - db_network
+      - inception_network
     env_file:
       - .env
     depends_on:
@@ -32,7 +32,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     networks:
-      - db_network
+      - inception_network
     depends_on:
       - wordpress
     env_file:
@@ -43,5 +43,5 @@ volumes:
   wordpress_data:
 
 networks:
-  db_network:
+  inception_network:
     driver: bridge
