@@ -7,7 +7,7 @@ RUN mkdir -p /run/php
 
 
 #this will be moved to a script 
-
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 COPY ./static/* /var/www/html/
 COPY ./conf/wp-config.php /
 
