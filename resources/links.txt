@@ -1,8 +1,9 @@
 [nginx]
 -https://www.rosehosting.com/blog/how-to-install-wordpress-with-nginx-on-debian-10/                 (installation/config)                           
 -https://spinupwp.com/hosting-wordpress-yourself-nginx-php-mysql/                                   (installation: mainly for nginx)
--http://nginx.org/en/docs/http/configuring_https_servers.html                                       (configuration:server blocks)
--https://pabis.eu/blog/2023-06-21-Share-Files-Between-Nginx-PHP-Docker.html                         (config:volumes)
+-http://nginx.org/en/docs/http/configuring_https_servers.html                                       (configuration: server blocks)
+-https://pabis.eu/blog/2023-06-21-Share-Files-Between-Nginx-PHP-Docker.html                         (config: volumes)
+-https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/                        (config: root and index)
 
 [mariadb/mysql]
 -https://wiki.alpinelinux.org/wiki/MariaDB#Installation                                             (dependencies)
