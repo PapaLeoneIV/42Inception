@@ -30,9 +30,6 @@ if [ -S "$SOCKET_FILE" ]; then
     print_info "MariaDB is already running, proceeding with configuration..."
 
     # Create database, user, and grant privileges
-
-
-
     execute_mysql_command "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
     execute_mysql_command "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
     execute_mysql_command "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO $MYSQL_USER@'%';"
@@ -62,11 +59,6 @@ else
     done
 
     print_success "MariaDB started."
-
-
-    print_info $MYSQL_DATABASE
-    print_info $MYSQL_USER
-    print_info $MYSQL_PASSWORD
 
     execute_mysql_command "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
     execute_mysql_command "CREATE USER IF NOT EXISTS $MYSQL_USER@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"

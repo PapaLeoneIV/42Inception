@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to print messages with colors
 print_info() {
     echo -e "\e[34m[INFO]\e[0m $1"
 }
@@ -27,7 +26,6 @@ print_info "Changing permissions on wp-cli.phar..."
 chmod +x wp-cli.phar
 if [[ $? -ne 0 ]]; then
     print_error "Failed to change permissions on wp-cli.phar!"
-    exit 1
 else
     print_success "Permissions changed successfully."
 fi
@@ -37,7 +35,6 @@ print_info "Moving wp-cli.phar to /usr/local/bin/wp..."
 mv wp-cli.phar /usr/local/bin/wp
 if [[ $? -ne 0 ]]; then
     print_error "Failed to move wp-cli.phar to /usr/local/bin/wp!"
-    exit 1
 else
     print_success "wp-cli.phar moved successfully."
 fi
@@ -47,7 +44,6 @@ print_info "Downloading WordPress core..."
 wp core download --path=/var/www/html --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to download WordPress core!"
-    exit 1
 else
     print_success "WordPress core downloaded successfully."
 fi
@@ -69,7 +65,6 @@ print_info "Moving wp-config.php..."
 mv /wp-config.php wp-config.php
 if [[ $? -ne 0 ]]; then
     print_error "Failed to move wp-config.php!"
-    exit 1
 else
     print_success "wp-config.php moved successfully."
 fi
@@ -81,12 +76,8 @@ sed -i "s/user/$MYSQL_USER/" wp-config.php
 sed -i "s/tmp/$MYSQL_PASSWORD/" wp-config.php
 sed -i "s/host/$MYSQL_HOSTNAME/" wp-config.php
 
-cat wp-config.php
-
-
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update wp-config.php!"
-    exit 1
 else
     print_success "wp-config.php updated successfully."
 fi
@@ -115,7 +106,6 @@ print_info "Updating PHP-FPM configuration..."
 sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update PHP-FPM configuration!"
-    exit 1
 else
     print_success "PHP-FPM configuration updated successfully."
 fi
@@ -125,7 +115,6 @@ print_info "Starting PHP-FPM..."
 /usr/sbin/php-fpm7.3 -F
 if [[ $? -ne 0 ]]; then
     print_error "Failed to start PHP-FPM!"
-    exit 1
 else
     print_success "PHP-FPM started successfully."
 fi
