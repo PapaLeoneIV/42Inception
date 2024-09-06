@@ -92,14 +92,25 @@ else
     print_success "WordPress installed successfully."
 fi
 
+# Creating a new WordPress admin
+print_info "Creating a WordPress admin..."
+wp user create $WP_ADMIN_USER $WP_ADMIN_EMAIL --role=administrator --user_pass=$WP_ADMIN_PASSWORD --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to create the WordPress admin! Already exists probably ..."
+else
+    print_success "New WordPress admin created successfully."
+fi
+
+
 # Creating a new WordPress user
 print_info "Creating a new WordPress user..."
-wp user create $WP_USER $WP_USER_EMAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
+wp user create $WP_USER $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 if [[ $? -ne 0 ]]; then
-    print_error "Failed to create the WordPress user!"
+    print_error "Failed to create the WordPress user! Already exists probably ..."
 else
     print_success "New WordPress user created successfully."
 fi
+
 
 # Updating PHP-FPM configuration
 print_info "Updating PHP-FPM configuration..."
