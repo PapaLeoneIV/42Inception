@@ -26,3 +26,9 @@
 
 [docker]
 - https://spacelift.io/blog/docker-volumes                                                          (docker volumes: documentation)
+
+
+
+[redis cache]
+-https://servebolt.com/help/wordpress/configuring-wordpress-with-redis-from-the-command-line/       (redis: installation)
+-https://www.cloudways.com/blog/install-redis-cache-wordpress/                                      (redis: installation)
