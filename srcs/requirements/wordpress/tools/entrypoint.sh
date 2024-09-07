@@ -12,6 +12,12 @@ print_error() {
     echo -e "\e[31m[ERROR]\e[0m $1"
 }
 
+while ! mysqladmin ping -h"$MYSQL_HOSTNAME" --silent; do
+    print_info "Waiting for MySQL to start..."
+    sleep 1
+done
+
+
 # Downloading wp-cli.phar
 print_info "Downloading wp-cli.phar..."
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
