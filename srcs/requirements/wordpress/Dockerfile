@@ -1,6 +1,6 @@
 FROM debian:buster
 
-RUN apt-get update && apt-get install -y php-fpm php-mysql curl
+RUN apt-get update && apt-get install -y php-fpm php-mysql curl mariadb-client
 
 
 RUN mkdir -p /run/php
