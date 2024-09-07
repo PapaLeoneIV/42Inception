@@ -32,3 +32,4 @@
 [redis cache]
 -https://servebolt.com/help/wordpress/configuring-wordpress-with-redis-from-the-command-line/       (redis: installation)
 -https://www.cloudways.com/blog/install-redis-cache-wordpress/                                      (redis: installation)
+-https://www.knthost.com/wordpress/setup-wordpress-object-caching-with-redis                        (redis: installation)

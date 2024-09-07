@@ -18,6 +18,7 @@ while ! mysqladmin ping -h"$MYSQL_HOSTNAME" --silent; do
 done
 
 
+
 # Downloading wp-cli.phar
 print_info "Downloading wp-cli.phar..."
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -125,6 +126,31 @@ if [[ $? -ne 0 ]]; then
     print_error "Failed to update PHP-FPM configuration!"
 else
     print_success "PHP-FPM configuration updated successfully."
+fi
+
+print_info "Starting Redis server..."
+redis-server --protected-mode no --daemonize yes
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to start Redis server!"
+else
+    print_success "Redis server started successfully."
+fi
+
+# Ensure Redis cache plugin is installed and activated
+wp plugin install redis-cache --activate --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to install or activate Redis cache plugin!"
+else
+    print_success "Redis cache plugin activated successfully."
+fi
+
+# Enable Redis cache
+print_info "Enabling Redis cache..."
+wp redis enable --force --allow-root 
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to enable Redis cache!"
+else
+    print_success "Redis cache enabled successfully."
 fi
 
 # Starting PHP-FPM

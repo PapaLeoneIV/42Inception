@@ -1,4 +1,12 @@
 <?php
+
+/**REDIS CACHE CONFIGURATION */
+define('WP_REDIS_HOST', 'wordpress');
+define('WP_REDIS_PORT', 6379);
+define('WP_CACHE_KEY_SALT', 'rileone.42.fr');
+
+/*---------------------------------- */
+
 /**
  * The base configuration for WordPress
  *
