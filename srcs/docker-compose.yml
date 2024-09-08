@@ -23,6 +23,9 @@ services:
       - .env
     depends_on:
       - mariadb
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+
   nginx:
     container_name: nginx
     restart: always
