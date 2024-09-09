@@ -13,9 +13,9 @@ print_error() {
     echo -e "\e[31m[ERROR]\e[0m $1"
 }
 
-if [ ! -f "/etc/redis/redis.conf.bak" ]; then
+if [ ! -f "/etc/redis/redis.conf.tmp" ]; then
 
-    cp /etc/redis/redis.conf /etc/redis/redis.conf.bak #We create the .bak to notify the program if it exists, don't go to the loop anymore
+    cp /etc/redis/redis.conf /etc/redis/redis.conf.tmp #We create the .bak to notify the program if it exists, don't go to the loop anymore
 
     sed -i "s|bind 127.0.0.1|#bind 127.0.0.1|g" /etc/redis/redis.conf
     sed -i "s|# maxmemory <bytes>|maxmemory 2mb|g" /etc/redis/redis.conf

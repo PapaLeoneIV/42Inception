@@ -1,7 +1,7 @@
 FROM debian:buster
 
 RUN apt-get update && \
-	apt-get install -y redis \
+	apt-get install -y redis 
 
 COPY ./tools/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

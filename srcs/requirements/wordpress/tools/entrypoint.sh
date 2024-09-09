@@ -128,17 +128,19 @@ else
 fi
 
 print_info "Redis Configuration Set Up"
-wp config set WP_REDIS_HOST redis --allow-root
-wp config set WP_REDIS_PORT 6379 --raw --allow-root
-wp config set WP_CACHE_KEY_SALT $DOMAIN_NAME --allow-root
-wp config set WP_REDIS_CLIENT rileone --allow-root
-
 # Ensure Redis cache plugin is installed and activated
 wp plugin install redis-cache --activate --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to install or activate Redis cache plugin!"
 else
     print_success "Redis cache plugin activated successfully."
+fi
+
+wp plugin update --all --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to update plugins!"
+else
+    print_success "Plugins updated successfully."
 fi
 
 # Enable Redis cache
