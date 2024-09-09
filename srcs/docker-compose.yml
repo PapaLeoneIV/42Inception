@@ -31,7 +31,7 @@ services:
     restart: always
     build: requirements/nginx
     ports:
-      - "443:443" #needs to be changed to 443 when i set up https
+      - "443:443"
     volumes:
       - wordpress_data:/var/www/html
     networks:
@@ -54,6 +54,16 @@ services:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
+  adminer:
+    build: bonus/adminer
+    container_name: adminer
+    restart: always
+    networks:
+      - inception_network
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_data:/var/www/html
 
 volumes:
   db_data:

@@ -28,23 +28,6 @@ else
     print_success "wp-cli.phar downloaded successfully."
 fi
 
-print_info "Downloading Adminer..."
-curl -L -o /adminer-4.8.1.php https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php
-
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to download Adminer!"
-else
-    print_success "Adminer downloaded successfully."
-
-    # Move Adminer to /var/www/html and rename it
-    mv /adminer-4.8.1.php /var/www/html/adminer-4.8.1.php
-
-    if [[ $? -ne 0 ]]; then
-        print_error "Failed to move Adminer!"
-    else
-        print_success "Adminer moved to /var/www/html/adminer-4.8.1.php successfully."
-    fi
-fi
 # Changing permissions
 print_info "Changing permissions on wp-cli.phar..."
 chmod +x wp-cli.phar
