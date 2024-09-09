@@ -64,6 +64,19 @@ services:
       - mariadb
     volumes:
       - wordpress_data:/var/www/html
+  ftp:
+    build: bonus/ftp
+    container_name: ftp
+    restart: always
+    networks:
+      - inception_network
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    env_file:
+      - .env
 
 volumes:
   db_data:
