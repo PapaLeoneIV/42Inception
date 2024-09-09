@@ -132,12 +132,23 @@ wp config set WP_REDIS_HOST redis --allow-root
 wp config set WP_REDIS_PORT 6379 --raw --allow-root
 wp config set WP_CACHE_KEY_SALT $DOMAIN_NAME --allow-root
 wp config set WP_REDIS_CLIENT rileone --allow-root
+
+# Ensure Redis cache plugin is installed and activated
 wp plugin install redis-cache --activate --allow-root
-wp plugin update --all --allow-root
-wp redis enable --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to install or activate Redis cache plugin!"
+else
+    print_success "Redis cache plugin activated successfully."
+fi
 
-
-
+# Enable Redis cache
+print_info "Enabling Redis cache..."
+wp redis enable --force --allow-root 
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to enable Redis cache!"
+else
+    print_success "Redis cache enabled successfully."
+fi
 
 # Starting PHP-FPM
 print_info "Starting PHP-FPM..."
