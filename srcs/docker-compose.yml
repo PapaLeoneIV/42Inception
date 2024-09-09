@@ -37,6 +37,20 @@ services:
       - wordpress
     env_file:
       - .env
+  redis:
+    container_name: redis
+    build: bonus/redis
+    depends_on:
+      - wordpress
+    ports:
+     - '6379:6379'
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception_network
 
 volumes:
   db_data:

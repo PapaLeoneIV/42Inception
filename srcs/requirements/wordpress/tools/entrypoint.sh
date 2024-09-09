@@ -127,6 +127,31 @@ else
     print_success "PHP-FPM configuration updated successfully."
 fi
 
+print_info "Redis Configuration Set Up"
+# Ensure Redis cache plugin is installed and activated
+wp plugin install redis-cache --activate --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to install or activate Redis cache plugin!"
+else
+    print_success "Redis cache plugin activated successfully."
+fi
+
+wp plugin update --all --allow-root
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to update plugins!"
+else
+    print_success "Plugins updated successfully."
+fi
+
+# Enable Redis cache
+print_info "Enabling Redis cache..."
+wp redis enable --force --allow-root 
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to enable Redis cache!"
+else
+    print_success "Redis cache enabled successfully."
+fi
+
 # Starting PHP-FPM
 print_info "Starting PHP-FPM..."
 /usr/sbin/php-fpm7.3 -F
