@@ -50,7 +50,6 @@ start_services() {
 if [[ -f "$INIT_FILE" ]]; then
     print_info "Container already initialized. Skipping configuration steps..."
     # Waiting for MySQL to start
-    update_wp_config
     start_services
     exit 0
 fi
@@ -179,16 +178,6 @@ fi
 
 # Installing WordPress
 print_info "Installing WordPress..."
-
-echo "DOMAIN_NAME: $DOMAIN_NAME"
-echo "WP_TITLE: $WP_TITLE"
-echo "WP_ADMIN_USER: $WP_ADMIN_USER"
-echo "WP_ADMIN_PASSWORD: $WP_ADMIN_PASSWORD"
-echo "WP_ADMIN_EMAIL: $WP_ADMIN_EMAIL"
-echo "WP_USER: $WP_USER"
-echo "WP_USER_EMAIL: $WP_USER_EMAIL"
-echo "WP_USER_PASSWORD: $WP_USER_PASSWORD"
-
 
 wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root
 if [[ $? -ne 0 ]]; then
