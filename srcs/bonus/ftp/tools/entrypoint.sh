@@ -18,5 +18,8 @@ useradd -m $FTP_USER
 echo "$FTP_USER:$FTP_PASSWORD" | chpasswd
 
 
+
+
 print_info "Starting vsftpd..."
-/etc/init.d/vsftpd start && tail -f /dev/null
+service vsftpd start /etc/vsftpd/vsftpd.conf
+

@@ -32,6 +32,7 @@ services:
       - "443:443"
     volumes:
       - wordpress_data:/var/www/html
+      - cert_data:/etc/ssl/certs
     networks:
       - inception_network
     depends_on:
@@ -71,6 +72,7 @@ services:
       - inception_network
     volumes:
       - wordpress_data:/var/www/html
+      - cert_data:/etc/ssl/certs
     ports:
       - "21:21"
       - "30000-30009:30000-30009"
@@ -80,6 +82,7 @@ services:
 volumes:
   db_data:
   wordpress_data:
+  cert_data:
 
 networks:
   inception_network:
