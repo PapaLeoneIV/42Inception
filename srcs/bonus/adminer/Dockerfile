@@ -8,7 +8,6 @@ RUN mkdir -p /run/php
 
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
-COPY ./conf/wp-config.php /
 COPY ./tools/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

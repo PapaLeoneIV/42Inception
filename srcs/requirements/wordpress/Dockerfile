@@ -1,11 +1,12 @@
 FROM debian:buster
 
 RUN apt-get update && apt-get install -y php-fpm \
-                                        php-mysql \
-                                        curl \
-                                        mariadb-client \
-                                        redis \
-	                                    php-redis
+    php-mysql \
+    curl \
+    mariadb-client \
+    redis \
+	php-redis \
+    grep
 
 
 RUN mkdir -p /run/php
@@ -13,7 +14,7 @@ RUN mkdir -p /run/php
 
 #this will be moved to a script 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
-COPY ./conf/wp-config.php /
+COPY ./conf/wp-config.php /var/www/html/wp-config.php
 
 
 EXPOSE 9000

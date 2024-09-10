@@ -35,29 +35,6 @@ fi
 # Navigate to the web directory
 cd /var/www/html || { print_error "Failed to change directory to /var/www/html"; exit 1; }
 
-# Moving wp-config.php
-print_info "Moving wp-config.php..."
-mv /wp-config.php wp-config.php
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to move wp-config.php!"
-else
-    print_success "wp-config.php moved successfully."
-fi
-
-# Updating wp-config.php with database credentials
-print_info "Updating wp-config.php with database credentials..."
-sed -i "s/db/$MYSQL_DATABASE/" wp-config.php
-sed -i "s/user/$MYSQL_USER/" wp-config.php
-sed -i "s/tmp/$MYSQL_PASSWORD/" wp-config.php
-sed -i "s/host/$MYSQL_HOSTNAME/" wp-config.php
-
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to update wp-config.php!"
-else
-    print_success "wp-config.php updated successfully."
-fi
-
-
  Updating PHP-FPM configuration
 print_info "Updating PHP-FPM configuration..."
 sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
