@@ -15,7 +15,7 @@ print_error() {
 
 
 print_info "Downloading Adminer..."
-curl -L -o /adminer-4.8.1.php https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php
+curl -L -o /adminer-4.8.1.php https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php > /dev/null 2>&1
 
 if [[ $? -ne 0 ]]; then
     print_error "Failed to download Adminer!"
@@ -36,7 +36,7 @@ cd /var/www/html || { print_error "Failed to change directory to /var/www/html";
 
 #Updating PHP-FPM configuration
 print_info "Updating PHP-FPM configuration..."
-sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
+sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update PHP-FPM configuration!"
 else
@@ -45,7 +45,7 @@ fi
 
 # Starting PHP-FPM
 print_info "Starting PHP-FPM..."
-/usr/sbin/php-fpm7.3 -F
+/usr/sbin/php-fpm7.3 -F > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
     print_error "Failed to start PHP-FPM!"
 else
