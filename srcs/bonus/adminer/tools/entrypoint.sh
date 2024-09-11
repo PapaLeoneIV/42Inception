@@ -22,7 +22,6 @@ if [[ $? -ne 0 ]]; then
 else
     print_success "Adminer downloaded successfully."
 
-    # Move Adminer to /var/www/html and rename it
     mv /adminer-4.8.1.php /var/www/html/adminer-4.8.1.php
 
     if [[ $? -ne 0 ]]; then
@@ -35,7 +34,7 @@ fi
 # Navigate to the web directory
 cd /var/www/html || { print_error "Failed to change directory to /var/www/html"; exit 1; }
 
- Updating PHP-FPM configuration
+#Updating PHP-FPM configuration
 print_info "Updating PHP-FPM configuration..."
 sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 if [[ $? -ne 0 ]]; then
