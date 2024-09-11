@@ -78,6 +78,16 @@ services:
       - "30000-30009:30000-30009"
     env_file:
       - .env
+  nextjs:
+    container_name: nextjs
+    build: bonus/nextjs
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - inception_network
+    env_file:
+      - .env
 
 volumes:
   db_data:
