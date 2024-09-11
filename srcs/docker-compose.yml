@@ -88,6 +88,22 @@ services:
       - inception_network
     env_file:
       - .env
+  cadvisor:
+    container_name: cadvisor
+    build: bonus/cAdvisor/
+    privileged: true  
+    networks:
+      - inception_network
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    restart: always
+
 
 volumes:
   db_data:
