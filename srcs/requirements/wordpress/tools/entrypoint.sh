@@ -45,12 +45,12 @@ start_services() {
 }
 
 # Check if the container was already initialized
-if [[ -f "$INIT_FILE" ]]; then
-    print_info "Container already initialized. Skipping configuration steps..."
-    # Waiting for MySQL to start
-    start_services
-    exit 0
-fi
+#if [[ -f "$INIT_FILE" ]]; then
+#    print_info "Container already initialized. Skipping configuration steps..."
+#    # Waiting for MySQL to start
+#    start_services
+#    exit 0
+#fi
 
 # Waiting for MySQL to start
 while ! mysqladmin ping -h"$MYSQL_HOSTNAME" --silent > /dev/null 2>&1; do
@@ -104,6 +104,14 @@ if [[ $? -ne 0 ]]; then
     print_error "Failed to remove wp-config-sample.php!"
 else
     print_success "wp-config-sample.php removed."
+fi
+
+print_info "Moving wp-config.php..."
+mv /wp-config.php wp-config.php
+if [[ $? -ne 0 ]]; then
+    print_error "Failed to move wp-config.php!"
+else
+    print_success "wp-config.php moved successfully."
 fi
 
 # Updating wp-config.php with database credentials

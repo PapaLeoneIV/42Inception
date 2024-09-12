@@ -3,10 +3,10 @@ version: '3.8'
 services:
   mariadb:
     container_name: mariadb
-    restart: always
     build: requirements/mariadb
+    restart: always
     volumes:
-      - db_data:/var/lib/mysql
+      - ${VOLUME_ROOT}:/var/lib/mysql
     networks:
       - inception_network
     env_file:
@@ -16,7 +16,7 @@ services:
     restart: always
     build: requirements/wordpress
     volumes:
-      - wordpress_data:/var/www/html #i think i need to copy the static files inside the volume from the dockerfile
+      - ${VOLUME_ROOT}:/var/www/html
     networks:
       - inception_network
     env_file:
@@ -31,8 +31,8 @@ services:
     ports:
       - "443:443"
     volumes:
-      - wordpress_data:/var/www/html
-      - cert_data:/etc/ssl/certs
+      - ${VOLUME_ROOT}:/var/www/html
+      - ${VOLUME_ROOT}:/etc/ssl/certs
     networks:
       - inception_network
     depends_on:
@@ -42,40 +42,40 @@ services:
   redis:
     container_name: redis
     build: bonus/redis
-    depends_on:
-      - wordpress
+    restart: always
     ports:
      - '6379:6379'
-    restart: always
+    volumes:
+      - ${VOLUME_ROOT}:/var/www/html
+    networks:
+      - inception_network
+    depends_on:
+      - wordpress
     env_file:
       - .env
-    volumes:
-      - wordpress_data:/var/www/html
-    networks:
-      - inception_network
   adminer:
-    build: bonus/adminer
     container_name: adminer
+    build: bonus/adminer
     restart: always
     networks:
       - inception_network
+    volumes:
+      - ${VOLUME_ROOT}:/var/www/html
     depends_on:
       - mariadb
       - wordpress
-    volumes:
-      - wordpress_data:/var/www/html
   ftp:
-    build: bonus/ftp
     container_name: ftp
+    build: bonus/ftp
     restart: always
-    networks:
-      - inception_network
-    volumes:
-      - wordpress_data:/var/www/html
-      - cert_data:/etc/ssl/certs
     ports:
       - "21:21"
       - "30000-30009:30000-30009"
+    networks:
+      - inception_network
+    volumes:
+      - ${VOLUME_ROOT}:/var/www/html
+      - ${VOLUME_ROOT}:/etc/ssl/certs
     env_file:
       - .env
   nextjs:
@@ -91,18 +91,18 @@ services:
   cadvisor:
     container_name: cadvisor
     build: bonus/cAdvisor/
-    privileged: true  
-    networks:
-      - inception_network
+    restart: always
+    privileged: true
     ports:
       - "8080:8080"
+    networks:
+      - inception_network
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
-    restart: always
 
 
 volumes:
