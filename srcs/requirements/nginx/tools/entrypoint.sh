@@ -1,4 +1,5 @@
 #!/bin/bash
+
 print_info() {
     echo -e "\e[34m[INFO]\e[0m $1"
 }
@@ -10,8 +11,6 @@ print_success() {
 print_error() {
     echo -e "\e[31m[ERROR]\e[0m $1"
 }
-
-
 
 print_info "Starting script to configure SSL and Nginx..."
 
@@ -42,9 +41,8 @@ openssl req -nodes -new -x509 \
 if [[ $? -ne 0 ]]; then
     print_error "Error: Failed to generate self-signed certificate!"
 else
-    print_success "Self-signed certificate generated successfully:"
+    print_success "Self-signed certificate generated successfully."
 fi
-
 
 if [[ -f /etc/nginx/nginx.conf ]]; then
     print_info "Nginx configuration file exists at /etc/nginx/nginx.conf"
@@ -53,11 +51,11 @@ else
 fi
 
 print_info "Starting Nginx..."
-nginx -g "daemon off;"
+nginx -g "daemon off;" > /dev/null 2>&1
 
 if [[ $? -ne 0 ]]; then
     print_error "Error: Nginx failed to start!"
     exit 1
 else
-    print_info "Nginx started successfully."
+    print_success "Nginx started successfully."
 fi

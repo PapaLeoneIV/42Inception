@@ -17,7 +17,7 @@ print_error() {
 
 # Function to execute a MySQL command and check for errors
 execute_mysql_command() {
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "$1"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "$1" > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         print_error "MySQL command failed: $1"
     else
@@ -36,12 +36,12 @@ if [ -S "$SOCKET_FILE" ]; then
     execute_mysql_command "FLUSH PRIVILEGES;"
 
     print_info "Shutting down MariaDB..."
-    mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
+    mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown > /dev/null 2>&1
 else
     print_info "MariaDB is not running. Initializing data directory..."
 
     # Initialize the MariaDB data directory
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         print_error "Failed to initialize MariaDB data directory."
         exit 1
@@ -50,10 +50,10 @@ else
     fi
 
     print_info "Starting MariaDB in the background..."
-    mysqld_safe --user=mysql --datadir=/var/lib/mysql &
+    mysqld_safe --user=mysql --datadir=/var/lib/mysql > /dev/null 2>&1 &
     sleep 5
     
-    until mysqladmin ping --silent; do
+    until mysqladmin ping --silent > /dev/null 2>&1; do
         print_info "Waiting for MariaDB to start..."
         sleep 2
     done
@@ -66,7 +66,7 @@ else
     execute_mysql_command "FLUSH PRIVILEGES;"
 
     print_info "Shutting down MariaDB..."
-    mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
+    mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown > /dev/null 2>&1
 fi
 
 print_info "Starting MariaDB in the foreground..."
