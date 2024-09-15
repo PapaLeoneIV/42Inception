@@ -1,19 +1,14 @@
-# Define variables
 COMPOSE_FILE := ./srcs/docker-compose.yml
 DOCKER_COMPOSE := docker compose -f $(COMPOSE_FILE)
 
-# Targets
 .PHONY: build up stop remove prune
 
-# Build Docker images
 build:
 	$(DOCKER_COMPOSE) build
 
-# Start Docker services in the background
 up: build
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up
 
-# Stop all running Docker containers
 stop:
 	@containers=$$(docker ps -aq); \
 	if [ -z "$$containers" ]; then \
@@ -23,7 +18,6 @@ stop:
 		echo "All containers stopped successfully."; \
 	fi
 
-# Remove all Docker containers
 remove:
 	@containers=$$(docker ps -aq); \
 	if [ -z "$$containers" ]; then \
