@@ -17,14 +17,14 @@ if [ ! -f "/etc/redis/redis.conf.tmp" ]; then
 
     cp /etc/redis/redis.conf /etc/redis/redis.conf.tmp
 
-    sed -i "s|bind 127.0.0.1|#bind 127.0.0.1|g" /etc/redis/redis.conf
-    sed -i "s|# maxmemory <bytes>|maxmemory 2mb|g" /etc/redis/redis.conf
-    sed -i "s|# maxmemory-policy noeviction|maxmemory-policy allkeys-lru|g" /etc/redis/redis.conf
+    sed -i "s|bind 127.0.0.1|#bind 127.0.0.1|g" /etc/redis/redis.conf > /dev/null 2>&1
+    sed -i "s|# maxmemory <bytes>|maxmemory 2mb|g" /etc/redis/redis.conf > /dev/null 2>&1
+    sed -i "s|# maxmemory-policy noeviction|maxmemory-policy allkeys-lru|g" /etc/redis/redis.conf > /dev/null 2>&1
 
 fi
 
 print_info "Starting Redis server..."
-redis-server --protected-mode no 
+redis-server --protected-mode no > dev/null 2>&1
 if [ $? -ne 0 ]; then
     print_error "Failed to start Redis server!"
 else
