@@ -36,7 +36,7 @@ print_info "Requesting self-signed certificate for $DOMAIN_NAME..."
 openssl req -nodes -new -x509 \
     -keyout "$P_KEY_" \
     -out "$CERTS_" \
-    -subj "/C=IT/ST=Italy/L=Florence/O=Ecole42/OU=Luiss/CN=$DOMAIN_NAME" > /dev/null 2>&1
+    -subj "/C=IT/ST=Italy/L=Florence/O=Ecole42/OU=Luiss/CN=$DOMAIN_NAME"
 
 if [[ $? -ne 0 ]]; then
     print_error "Error: Failed to generate self-signed certificate!"
@@ -51,7 +51,7 @@ else
 fi
 
 print_info "Starting Nginx..."
-nginx -g "daemon off;" > /dev/null 2>&1
+nginx -g "daemon off;"
 
 if [[ $? -ne 0 ]]; then
     print_error "Error: Nginx failed to start!"

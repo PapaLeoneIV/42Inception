@@ -1,6 +1,5 @@
 <?php
 
-/**REDIS CACHE CONFIGURATION */
 define('WP_REDIS_HOST', 'redis');
 define('WP_REDIS_PORT', 6379);
 define('WP_CACHE_KEY_SALT', 'rileone.42.fr');
@@ -36,7 +35,7 @@ define( 'DB_USER', 'user' );
 define( 'DB_PASSWORD', 'tmp' );
 
 /** Database hostname */
-define( 'DB_HOST', 'host' );
+define( 'DB_HOST', 'host' )             ;
 
 /** Database charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );

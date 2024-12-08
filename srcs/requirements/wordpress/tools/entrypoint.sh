@@ -15,103 +15,48 @@ print_error() {
     echo -e "\e[31m[ERROR]\e[0m $1"
 }
 
-update_wp_config() {
-    if grep -q "define('DB_NAME', '')" "$CONFIG_FILE"; then
-        print_info "Updating wp-config.php with database credentials..."
-        sed -i "s/define('DB_NAME', '')/define('DB_NAME', '$MYSQL_DATABASE')/" $CONFIG_FILE > /dev/null 2>&1
-        sed -i "s/define('DB_USER', '')/define('DB_USER', '$MYSQL_USER')/" $CONFIG_FILE > /dev/null 2>&1
-        sed -i "s/define('DB_PASSWORD', '')/define('DB_PASSWORD', '$MYSQL_PASSWORD')/" $CONFIG_FILE > /dev/null 2>&1
-        sed -i "s/define('DB_HOST', '')/define('DB_HOST', '$MYSQL_HOSTNAME')/" $CONFIG_FILE > /dev/null 2>&1
-
-        if [[ $? -ne 0 ]]; then
-            print_error "Failed to update wp-config.php!"
-        else
-            print_success "wp-config.php updated successfully."
-        fi
-    else
-        print_info "wp-config.php already contains database credentials. Skipping update."
-    fi
-}
-
 # Function to start PHP-FPM
 start_services() {
     print_info "Starting PHP-FPM..."
-    /usr/sbin/php-fpm7.3 -F > /dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
-        print_error "Failed to start PHP-FPM!"
-    else
-        print_success "PHP-FPM started successfully."
-    fi
+    exec /usr/sbin/php-fpm7.3 -F
 }
 
-# Check if the container was already initialized
+# Waiting for MySQL to start
+ping_db(){
+    while ! mysqladmin ping -h"$MYSQL_HOSTNAME" --silent; do
+    print_info "Waiting for MySQL to start..."
+    sleep 1
+    done
+}
+
+
+#Check if the container was already initialized
 #if [[ -f "$INIT_FILE" ]]; then
 #    print_info "Container already initialized. Skipping configuration steps..."
-#    # Waiting for MySQL to start
+#    ping_db
 #    start_services
 #    exit 0
 #fi
 
-# Waiting for MySQL to start
-while ! mysqladmin ping -h"$MYSQL_HOSTNAME" --silent > /dev/null 2>&1; do
-    print_info "Waiting for MySQL to start..."
-    sleep 1
-done
 
-# Downloading wp-cli.phar
-print_info "Downloading wp-cli.phar..."
-curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar > /dev/null 2>&1
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to download wp-cli.phar!"
-else
-    print_success "wp-cli.phar downloaded successfully."
-fi
-
-# Changing permissions
-print_info "Changing permissions on wp-cli.phar..."
-chmod +x wp-cli.phar > /dev/null 2>&1
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to change permissions on wp-cli.phar!"
-else
-    print_success "Permissions changed successfully."
-fi
-
-# Moving wp-cli.phar to /usr/local/bin/wp
-print_info "Moving wp-cli.phar to /usr/local/bin/wp..."
-mv wp-cli.phar /usr/local/bin/wp > /dev/null 2>&1
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to move wp-cli.phar to /usr/local/bin/wp!"
-else
-    print_success "wp-cli.phar moved successfully."
-fi
-
-# Downloading WordPress core
 print_info "Downloading WordPress core..."
-wp core download --path=/var/www/html --allow-root > /dev/null 2>&1
+wp core download --path=/var/www/html --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to download WordPress core!"
 else
     print_success "WordPress core downloaded successfully."
 fi
+print_info "Moving inside /var/www/html..."
 
-# Navigate to the web directory
-cd /var/www/html || { print_error "Failed to change directory to /var/www/html"; exit 1; }
+mv /wp-config.php $CONFIG_FILE
+cd /var/www/html
 
-# Removing wp-config-sample.php
-print_info "Removing wp-config-sample.php..."
-rm wp-config-sample.php > /dev/null 2>&1
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to remove wp-config-sample.php!"
+
+if [ -f "wp-config-sample.php" ]; then
+    rm wp-config-sample.php
+    print_info "wp-config-sample.php exists."
 else
-    print_success "wp-config-sample.php removed."
-fi
-
-print_info "Moving wp-config.php..."
-mv /wp-config.php wp-config.php
-if [[ $? -ne 0 ]]; then
-    print_error "Failed to move wp-config.php!"
-else
-    print_success "wp-config.php moved successfully."
+    print_error "wp-config-sample.php does not exist!"
 fi
 
 # Updating wp-config.php with database credentials
@@ -119,7 +64,7 @@ print_info "Updating wp-config.php with database credentials..."
 
 # Check if MYSQL_DATABASE is set and not empty
 if [[ -n "$MYSQL_DATABASE" ]]; then
-    sed -i "s/db/$MYSQL_DATABASE/" wp-config.php > /dev/null 2>&1
+    sed -i "s/db/$MYSQL_DATABASE/" $CONFIG_FILE
     if [[ $? -ne 0 ]]; then
         print_error "Failed to update database name in wp-config.php!"
     else
@@ -131,7 +76,7 @@ fi
 
 # Check if MYSQL_USER is set and not empty
 if [[ -n "$MYSQL_USER" ]]; then
-    sed -i "s/user/$MYSQL_USER/" wp-config.php > /dev/null 2>&1
+    sed -i "s/user/$MYSQL_USER/" $CONFIG_FILE
     if [[ $? -ne 0 ]]; then
         print_error "Failed to update database user in wp-config.php!"
     else
@@ -143,7 +88,7 @@ fi
 
 # Check if MYSQL_PASSWORD is set and not empty
 if [[ -n "$MYSQL_PASSWORD" ]]; then
-    sed -i "s/tmp/$MYSQL_PASSWORD/" wp-config.php > /dev/null 2>&1
+    sed -i "s/tmp/$MYSQL_PASSWORD/" $CONFIG_FILE
     if [[ $? -ne 0 ]]; then
         print_error "Failed to update database password in wp-config.php!"
     else
@@ -155,7 +100,7 @@ fi
 
 # Check if MYSQL_HOSTNAME is set and not empty
 if [[ -n "$MYSQL_HOSTNAME" ]]; then
-    sed -i "s/host/$MYSQL_HOSTNAME/" wp-config.php > /dev/null 2>&1
+    sed -i "s/host/$MYSQL_HOSTNAME/" $CONFIG_FILE
     if [[ $? -ne 0 ]]; then
         print_error "Failed to update database host in wp-config.php!"
     else
@@ -167,17 +112,19 @@ fi
 
 # Installing WordPress
 print_info "Installing WordPress..."
-
-wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root > /dev/null 2>&1
+wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "WordPress installation failed!"
 else
     print_success "WordPress installed successfully."
 fi
 
+
+#rm /var/www/html/wp-content/object-cache
+
 # Creating a new WordPress admin
 print_info "Creating a WordPress admin..."
-wp user create $WP_ADMIN_USER $WP_ADMIN_EMAIL --role=administrator --user_pass=$WP_ADMIN_PASSWORD --allow-root > /dev/null 2>&1
+wp user create $WP_ADMIN_USER $WP_ADMIN_EMAIL --role=administrator --user_pass=$WP_ADMIN_PASSWORD --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to create the WordPress admin! Already exists probably ..."
 else
@@ -186,33 +133,34 @@ fi
 
 # Creating a new WordPress user
 print_info "Creating a new WordPress user..."
-wp user create $WP_USER $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root > /dev/null 2>&1
+wp user create $WP_USER $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to create the WordPress user! Already exists probably ..."
 else
     print_success "New WordPress user created successfully."
 fi
 
+
 # Updating PHP-FPM configuration
 print_info "Updating PHP-FPM configuration..."
-sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf > /dev/null 2>&1
+sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update PHP-FPM configuration!"
 else
     print_success "PHP-FPM configuration updated successfully."
 fi
 
-# Redis Configuration Set Up
+
+## Ensure Redis cache plugin is installed and activated
 print_info "Redis Configuration Set Up"
-# Ensure Redis cache plugin is installed and activated
-wp plugin install redis-cache --activate --allow-root > /dev/null 2>&1
+wp plugin install redis-cache --activate --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to install or activate Redis cache plugin!"
 else
     print_success "Redis cache plugin activated successfully."
 fi
 
-wp plugin update --all --allow-root > /dev/null 2>&1
+wp plugin update --all --allow-root
 if [[ $? -ne 0 ]]; then
     print_error "Failed to update plugins!"
 else
@@ -221,9 +169,9 @@ fi
 
 # Enable Redis cache
 print_info "Enabling Redis cache..."
-wp redis enable --force --allow-root > /dev/null 2>&1
+wp redis enable --force --allow-root
 if [[ $? -ne 0 ]]; then
-    print_error "Failed to enable Redis cache!"
+    print_error "Failed to enable Redis cache!" 
 else
     print_success "Redis cache enabled successfully."
 fi
@@ -232,7 +180,6 @@ fi
 touch "$INIT_FILE"
 print_success "Container initialized successfully."
 
-# Starting services
-start_services
-
 print_success "Script execution completed!"
+exec /usr/sbin/php-fpm7.3 -F
+

@@ -45,7 +45,7 @@ fi
 
 # Starting PHP-FPM
 print_info "Starting PHP-FPM..."
-/usr/sbin/php-fpm7.3 -F > /dev/null 2>&1
+/usr/sbin/php-fpm7.3 -F
 if [[ $? -ne 0 ]]; then
     print_error "Failed to start PHP-FPM!"
 else
